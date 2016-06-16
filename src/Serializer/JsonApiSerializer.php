@@ -13,22 +13,22 @@ namespace NilPortugues\Symfony\JsonApiBundle\Serializer;
 
 use NilPortugues\Api\JsonApi\JsonApiTransformer;
 use NilPortugues\Api\Mapping\Mapping;
-use NilPortugues\Serializer\DeepCopySerializer;
+use NilPortugues\Api\JsonApi\JsonApiSerializer as BaseJsonApiSerializer;
 use ReflectionClass;
 use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Exception;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class JsonApiSerializer.
  */
-class JsonApiSerializer extends DeepCopySerializer
+class JsonApiSerializer extends BaseJsonApiSerializer
 {
     /**
      * @param JsonApiTransformer $transformer
-     * @param Router             $router
+     * @param RouterInterface    $router
      */
-    public function __construct(JsonApiTransformer $transformer, Router $router)
+    public function __construct(JsonApiTransformer $transformer, RouterInterface $router)
     {
         $this->mapUrls($transformer, $router);
         parent::__construct($transformer);
@@ -36,9 +36,9 @@ class JsonApiSerializer extends DeepCopySerializer
 
     /**
      * @param JsonApiTransformer $transformer
-     * @param Router             $router
+     * @param RouterInterface    $router
      */
-    private function mapUrls(JsonApiTransformer $transformer, Router $router)
+    private function mapUrls(JsonApiTransformer $transformer, RouterInterface $router)
     {
         $reflectionClass = new ReflectionClass($transformer);
         $reflectionProperty = $reflectionClass->getProperty('mappings');
@@ -74,12 +74,12 @@ class JsonApiSerializer extends DeepCopySerializer
     }
 
     /**
-     * @param Router          $router
+     * @param RouterInterface $router
      * @param Mapping         $mapping
      * @param ReflectionClass $mappingClass
      * @param string          $property
      */
-    private function setUrlWithReflection(Router $router, Mapping $mapping, ReflectionClass $mappingClass, $property)
+    private function setUrlWithReflection(RouterInterface $router, Mapping $mapping, ReflectionClass $mappingClass, $property)
     {
         $mappingProperty = $mappingClass->getProperty($property);
         $mappingProperty->setAccessible(true);
@@ -89,14 +89,14 @@ class JsonApiSerializer extends DeepCopySerializer
     }
 
     /**
-     * @param Router $router
-     * @param string $routeNameFromMappingFile
+     * @param RouterInterface $router
+     * @param string          $routeNameFromMappingFile
      *
      * @return mixed
      *
      * @throws RuntimeException
      */
-    private function getUrlPattern(Router $router, $routeNameFromMappingFile)
+    private function getUrlPattern(RouterInterface $router, $routeNameFromMappingFile)
     {
         if (!empty($routeNameFromMappingFile)) {
             try {
