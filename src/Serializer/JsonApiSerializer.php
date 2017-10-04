@@ -15,9 +15,9 @@ use NilPortugues\Api\JsonApi\JsonApiTransformer;
 use NilPortugues\Api\Mapping\Mapping;
 use ReflectionClass;
 use RuntimeException;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class JsonApiSerializer
@@ -27,9 +27,9 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
 {
     /**
      * @param JsonApiTransformer $transformer
-     * @param Router             $router
+     * @param RouterInterface    $router
      */
-    public function __construct(JsonApiTransformer $transformer, Router $router)
+    public function __construct(JsonApiTransformer $transformer, RouterInterface $router)
     {
         $this->mapUrls($transformer, $router);
 
@@ -38,9 +38,9 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
 
     /**
      * @param JsonApiTransformer $transformer
-     * @param Router             $router
+     * @param RouterInterface    $router
      */
-    private function mapUrls(JsonApiTransformer $transformer, Router $router)
+    private function mapUrls(JsonApiTransformer $transformer, RouterInterface $router)
     {
         $request = Request::createFromGlobals();
         $baseUrl = $request->getSchemeAndHttpHost();
@@ -85,12 +85,12 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
     }
 
     /**
-     * @param Router          $router
+     * @param RouterInterface $router
      * @param Mapping         $mapping
      * @param ReflectionClass $mappingClass
      * @param string          $property
      */
-    private function setUrlWithReflection(Router $router, Mapping $mapping, ReflectionClass $mappingClass, $property, $baseUrl)
+    private function setUrlWithReflection(RouterInterface $router, Mapping $mapping, ReflectionClass $mappingClass, $property, $baseUrl)
     {
         $mappingProperty = $mappingClass->getProperty($property);
         $mappingProperty->setAccessible(true);
@@ -100,14 +100,14 @@ class JsonApiSerializer extends \NilPortugues\Api\JsonApi\JsonApiSerializer
     }
 
     /**
-     * @param Router $router
-     * @param string $routeNameFromMappingFile
+     * @param RouterInterface $router
+     * @param string          $routeNameFromMappingFile
      *
      * @return mixed
      *
      * @throws RuntimeException
      */
-    private function getUrlPattern(Router $router, $routeNameFromMappingFile, $baseUrl)
+    private function getUrlPattern(RouterInterface $router, $routeNameFromMappingFile, $baseUrl)
     {
         if (!empty($routeNameFromMappingFile)) {
             try {
